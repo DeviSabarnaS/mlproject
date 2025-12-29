@@ -1,0 +1,116 @@
+<html>
+<head>
+    <title>Energy Consumption Predictor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .login {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 15px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .results {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="login">
+       <h1>Energy Consumption Predictor</h1>
+   
+       <form action="{{ url_for('predict_datapoint')}}" method="post">
+        <div class="mb-3">
+            <label class="form-label">Building Type</label>
+            <select class="form-control" name="building_type" required>
+                <option selected disabled value="">Select Building Type</option>
+                <option value="Residential">Residential</option>
+                <option value="Industrial">Industrial</option>
+                <option value="Commercial">Commercial</option>
+            </select>
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Square Footage</label>
+            <input class="form-control" type="number" name="square_footage"
+                placeholder="Enter square footage" step="any" required />
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Number of Occupants</label>
+            <input class="form-control" type="number" name="number_of_occupants"
+                placeholder="Enter number of occupants" step="1" required />
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Appliances Used</label>
+            <input class="form-control" type="number" name="appliances_used"
+                placeholder="Enter number of appliances" step="1" required />
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Average Temperature (°F)</label>
+            <input class="form-control" type="number" name="average_temperature"
+                placeholder="Enter average temperature" step="0.01" required />
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Day of Week</label>
+            <select class="form-control" name="day_of_week" required>
+                <option selected disabled value="">Select Day of Week</option>
+                <option value="Weekday">Weekday</option>
+                <option value="Weekend">Weekend</option>
+            </select>
+        </div>
+        
+        <div class="mb-3">
+            <input class="btn btn-primary" type="submit" value="Predict Energy Consumption" />
+        </div>
+    </form>
+    
+    {% if results %}
+    <div class="results">
+       Predicted Energy Consumption: {{results}} kWh
+    </div>
+    {% endif %}
+   </div>
+</body>
+</html>
