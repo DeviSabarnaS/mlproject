@@ -32,5 +32,54 @@ def predict_datapoint():
         prediction = predict_pipeline.predict(features)
         return render_template('home.html', results=prediction[0])
 
+@app.route('/api/predict', methods=['POST'])
+def api_predict():
+    try:
+        # Accept JSON data
+        json_data = request.get_json()
+        
+        # Validate required fields
+        required_fields = ['square_footage', 'number_of_occupants', 'appliances_used', 
+                          'average_temperature', 'building_type', 'day_of_week']
+        
+        for field in required_fields:
+            if field not in json_data:
+                return jsonify({
+                    'success': False,
+                    'error': f'Missing required field: {field}'
+                }), 400
+        
+        data = CustomData(
+            square_footage = float(json_data['square_footage']),
+            number_of_occupants = int(json_data['number_of_occupants']),
+            appliances_used = int(json_data['appliances_used']),
+            average_temperature = float(json_data['average_temperature']),
+            building_type = json_data['building_type'],
+            day_of_week = json_data['day_of_week']
+        )
+        
+        features = data.get_data_as_data_frame()
+        predict_pipeline = PredictPipeline()
+        prediction = predict_pipeline.predict(features)
+        
+        # Return JSON response
+        return jsonify({
+            'success': True,
+            'prediction': float(prediction[0]),
+            'energy_consumption_kwh': round(float(prediction[0]), 2),
+            'input_data': json_data
+        })
+        
+    except ValueError as e:
+        return jsonify({
+            'success': False,
+            'error': f'Invalid data type: {str(e)}'
+        }), 400
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': f'Prediction failed: {str(e)}'
+        }), 500
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0',port=8080,debug=True)
